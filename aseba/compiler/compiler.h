@@ -30,9 +30,9 @@
 #include <istream>
 
 #include "errors_code.h"
-#include "common/types.h"
-#include "common/msg/TargetDescription.h"
-#include "common/utils/FormatableString.h"
+#include <aseba/common/types.h>
+#include <aseba/common/msg/TargetDescription.h>
+#include <aseba/common/utils/FormatableString.h>
 
 namespace Aseba
 {
