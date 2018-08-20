@@ -296,6 +296,7 @@ void ThymioInterface::load(const string& filePath)
 	commonDefinitions.constants.clear();
 	allVariables.clear();
 
+
 	// load new data
 	int noNodeCount(0);
 	bool wasError(false);
@@ -525,6 +526,33 @@ bool ThymioInterface::getNodeAndVarPos(const string& nodeName, const string& var
 	return true;
 }
 
+bool ThymioInterface::setup(const string& nodeName){
+    // clear existing data
+    commonDefinitions.events.clear();
+    commonDefinitions.constants.clear();
+    allVariables.clear();
+
+    commonDefinitions.events.push_back(NamedValue(UTF8ToWString("thymioevents"), 2));
+    std::wstring code;
+    bool ok;
+    unsigned nodeId(getNodeId(Aseba::UTF8ToWString(nodeName), 0, &ok));
+    if (ok){
+        commonDefinitions.events.push_back(NamedValue(UTF8ToWString("ProxVLeds"), 2));
+        code = Aseba::UTF8ToWString("onevent ProxVLeds call leds.prox.v(event.args[0],event.args[1])");
+        if (compileAndSendCode(code, nodeId, nodeName))
+            std::cout<<"Couln't send this command!";
+
+        commonDefinitions.events.push_back(NamedValue(UTF8ToWString("ProxHLeds"), 8));
+        code = Aseba::UTF8ToWString("onevent ProxHLeds call leds.prox.h(event.args[0],event.args[1],event.args[2],event.args[3],event.args[4],event.args[5],event.args[6],event.args[7])");
+        if (compileAndSendCode(code, nodeId, nodeName))
+            std::cout<<"Couln't send this command!";
+        this->wait();
+
+
+    }
+    return false;
+
+}
 int main()
 {
     // initialize Dashel plugins
@@ -538,14 +566,10 @@ int main()
     interface->listNodes();
     interface->wait();
 
-    interface->load("/home/sina/Desktop/aseba/examples/clients/cpp-api/ScriptDBusThymio.aesl");
+//    interface->load("/home/sina/Desktop/aseba/examples/clients/cpp-api/ScriptDBusThymio.aesl");
+    interface->setup("thymio-II");
     interface->wait();
 
-//    interface->listVariables("thymio-II");
-//    interface->wait();
-
-//        shell->setVariable("thymio-II","motor.left.target",{"0"});
-//        shell->wait();
 
     int j = 0;
     int k = 0;
@@ -571,15 +595,14 @@ int main()
         }
         std::printf("\n");
 
-        if(proximity_h[2]>2000)
-            interface->setVariable("thymio-II","motor.left.target",{25});
-        else
-            interface->setVariable("thymio-II","motor.left.target",{0});
+//        if(proximity_h[2]>2000)
+//            interface->setVariable("thymio-II","motor.left.target",{25});
+//        else
+//            interface->setVariable("thymio-II","motor.left.target",{0});
 
         j++;
     }
     while(j<=10);
-
 
     interface->sendEventName("ProxHLeds",{32,32,32,32,32,32,32,32});
     interface->sendEventName("ProxVLeds",{32,32});

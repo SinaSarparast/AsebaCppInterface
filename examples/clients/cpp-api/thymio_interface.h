@@ -96,6 +96,7 @@ public:
     void load(const std::string& filePath);
     void stop(const std::string& nodeName);
     void run(const std::string& nodeName);
+    bool setup(const std::string& nodeName);
 
 	// helper functions
 	bool getNodeAndVarPos(const std::string& nodeName, const std::string& variableName, unsigned& nodeId, unsigned& pos) const;
