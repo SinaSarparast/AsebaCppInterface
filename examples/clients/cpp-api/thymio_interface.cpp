@@ -537,16 +537,14 @@ bool ThymioInterface::setup(const string& nodeName){
     bool ok;
     unsigned nodeId(getNodeId(Aseba::UTF8ToWString(nodeName), 0, &ok));
     if (ok){
+
         commonDefinitions.events.push_back(NamedValue(UTF8ToWString("ProxVLeds"), 2));
-        code = Aseba::UTF8ToWString("onevent ProxVLeds call leds.prox.v(event.args[0],event.args[1])");
+        //The whole code for both events should be compiled together
+        commonDefinitions.events.push_back(NamedValue(UTF8ToWString("ProxHLeds"), 8));
+        code = Aseba::UTF8ToWString("onevent ProxVLeds call leds.prox.v(event.args[0],event.args[1])\n onevent ProxHLeds call leds.prox.h(event.args[0],event.args[1],event.args[2],event.args[3],event.args[4],event.args[5],event.args[6],event.args[7])");
         if (compileAndSendCode(code, nodeId, nodeName))
             std::cout<<"Couln't send this command!";
 
-        commonDefinitions.events.push_back(NamedValue(UTF8ToWString("ProxHLeds"), 8));
-        code = Aseba::UTF8ToWString("onevent ProxHLeds call leds.prox.h(event.args[0],event.args[1],event.args[2],event.args[3],event.args[4],event.args[5],event.args[6],event.args[7])");
-        if (compileAndSendCode(code, nodeId, nodeName))
-            std::cout<<"Couln't send this command!";
-        this->wait();
 
 
     }
